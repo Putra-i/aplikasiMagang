@@ -43,6 +43,8 @@ class MahasiswaController extends Controller
     {
         $request->validate([
             'company_id' => 'required|exists:companies,id',
+            'period_start' => 'required|date',
+            'period_end' => 'required|date|after:period_start',
             'password' => 'required',
         ]);
 
@@ -63,13 +65,13 @@ class MahasiswaController extends Controller
         $application = InternshipApplication::create([
             'user_id' => $user->id,
             'company_id' => $request->company_id,
-            'period_start' => now(),
-            'period_end' => now()->addMonths(6),
+            'period_start' => $request->period_start,
+            'period_end' => $request->period_end,
             'status' => 'pending',
         ]);
 
         // Notify admins
-        $admins = \App\Models\User::where('role', 'admin')->where('status', 'approved')->get();
+        $admins = \App\Models\User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             Notification::send($admin->id, 'pengajuan_magang', [
                 'message' => "Mahasiswa '{$user->name}' mengajukan magang di '{$company->name}'.",
@@ -97,7 +99,6 @@ class MahasiswaController extends Controller
             'custom_company_address' => 'required|string',
             'period_start' => 'required|date',
             'period_end' => 'required|date|after:period_start',
-            'acceptance_letter' => 'required|file|max:5120',
             'password' => 'required',
         ]);
 
@@ -113,7 +114,6 @@ class MahasiswaController extends Controller
             ]);
         }
 
-        $letterPath = $request->file('acceptance_letter')->store('acceptance-letters', 'public');
 
         $application = InternshipApplication::create([
             'user_id' => $user->id,
@@ -121,11 +121,10 @@ class MahasiswaController extends Controller
             'custom_company_address' => $validated['custom_company_address'],
             'period_start' => $validated['period_start'],
             'period_end' => $validated['period_end'],
-            'acceptance_letter' => $letterPath,
             'status' => 'pending',
         ]);
 
-        $admins = \App\Models\User::where('role', 'admin')->where('status', 'approved')->get();
+        $admins = \App\Models\User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             Notification::send($admin->id, 'pengajuan_magang_baru', [
                 'message' => "Mahasiswa '{$user->name}' mengajukan tempat magang baru: '{$validated['custom_company_name']}'.",
@@ -197,4 +196,6 @@ class MahasiswaController extends Controller
 
         return response()->download($templatePath, 'Template_Laporan_Magang.docx');
     }
+
+
 }

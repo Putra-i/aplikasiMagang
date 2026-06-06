@@ -6,15 +6,13 @@
     ]">
         <!-- Logo -->
         <div class="p-5 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl gradient-animate flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <img src="/TMJ.png" alt="Logo TMJ" class="max-w-full max-h-full object-contain">
                 </div>
                 <div>
-                    <h2 class="font-bold text-white text-sm">Anti Gravity</h2>
-                    <p class="text-xs text-white/50">Sistem Magang</p>
+                    <h2 class="font-bold text-white text-sm">SPM TMJ PNUP</h2>
+                    <p class="text-xs text-white/50">Sistem Pendaftaran Magang</p>
                 </div>
                 <button @click="$emit('close')" class="lg:hidden ml-auto text-white/50 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,8 +32,8 @@
                 :class="[
                     'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
                     isActive(item)
-                        ? 'bg-primary-500/20 text-primary-300 border border-primary-500/30'
-                        : 'text-white/60 hover:text-white hover:bg-white/5'
+                        ? 'bg-primary-500/10 text-primary-700 border border-primary-500/30 shadow-sm'
+                        : 'text-white/70 hover:text-white hover:bg-black/5'
                 ]"
             >
                 <span v-html="item.icon" class="w-5 h-5 shrink-0"></span>

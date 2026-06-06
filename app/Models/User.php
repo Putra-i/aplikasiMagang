@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'id_pengguna', 'role', 'jurusan', 'prodi',
-        'password', 'status',
+        'password',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -21,13 +21,7 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
-            'id_pengguna' => 'integer',
         ];
-    }
-
-    public function isApproved(): bool
-    {
-        return $this->status === 'approved';
     }
 
     public function internshipApplications()
@@ -58,7 +52,7 @@ class User extends Authenticatable
     public function hasActiveInternship(): bool
     {
         return $this->internshipApplications()
-            ->where('status', 'approved_kops')
+            ->whereIn('status', ['approved_admin', 'approved'])
             ->where('period_end', '>=', now())
             ->exists();
     }
@@ -66,7 +60,7 @@ class User extends Authenticatable
     public function getAssignedSupervisor()
     {
         $app = $this->internshipApplications()
-            ->where('status', 'approved_kops')
+            ->where('status', 'approved')
             ->whereNotNull('supervisor_id')
             ->latest()
             ->first();

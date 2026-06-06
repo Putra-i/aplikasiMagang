@@ -14,14 +14,12 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $pendingUsers = User::where('status', 'pending')->count();
         $pendingApps = InternshipApplication::where('status', 'pending')->count();
         $totalCompanies = Company::count();
         $totalUsers = User::count();
 
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                'pendingUsers' => $pendingUsers,
                 'pendingApps' => $pendingApps,
                 'totalCompanies' => $totalCompanies,
                 'totalUsers' => $totalUsers,
@@ -33,11 +31,9 @@ class AdminController extends Controller
     public function pengguna()
     {
         $users = User::orderBy('created_at', 'desc')->get();
-        $pendingUsers = User::where('status', 'pending')->get();
 
         return Inertia::render('Admin/Pengguna', [
             'users' => $users,
-            'pendingUsers' => $pendingUsers,
         ]);
     }
 
@@ -45,48 +41,21 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'id_pengguna' => 'required|numeric|digits:8|unique:users,id_pengguna',
-            'role' => 'required|in:admin,kops,dosen,mahasiswa',
-            'jurusan' => 'nullable|string|in:Teknik Informatika dan Komputer,Teknik Elektro,Administrasi Niaga',
-            'prodi' => 'nullable|string|in:D4 Teknik Multimedia dan Jaringan,D4 Teknik Komputer dan Jaringan,D4 Teknik Listrik,D4 Teknologi Rekayasa Sistem Elektronika,D3 Administrasi Bisnis,D4 Manajemen Bisnis Jasa Pariwisata',
+            'id_pengguna' => 'required|string|min:8|max:25|unique:users,id_pengguna',
+            'role' => 'required|in:admin,dosen,mahasiswa',
         ]);
-
-        if (in_array($validated['role'], ['mahasiswa', 'dosen'])) {
-            $request->validate([
-                'jurusan' => 'required|string',
-                'prodi' => 'required|string',
-            ]);
-        }
 
         User::create([
             'name' => $validated['name'],
             'id_pengguna' => $validated['id_pengguna'],
             'role' => $validated['role'],
-            'jurusan' => $validated['jurusan'] ?? null,
-            'prodi' => $validated['prodi'] ?? null,
             'password' => Hash::make($validated['id_pengguna']),
-            'status' => 'approved',
         ]);
 
         return back()->with('success', 'User berhasil ditambahkan!');
     }
 
-    public function approveUser(User $user)
-    {
-        $user->update(['status' => 'approved']);
 
-        Notification::send($user->id, 'akun_disetujui', [
-            'message' => 'Selamat! Akun Anda telah disetujui oleh Admin. Silakan login.',
-        ]);
-
-        return back()->with('success', "Akun {$user->name} berhasil disetujui.");
-    }
-
-    public function rejectUser(User $user)
-    {
-        $user->update(['status' => 'rejected']);
-        return back()->with('success', "Akun {$user->name} ditolak.");
-    }
 
     // === PERUSAHAAN ===
     public function perusahaan()
@@ -135,52 +104,78 @@ class AdminController extends Controller
         return back()->with('success', 'Perusahaan berhasil dihapus!');
     }
 
-    // === VERIFIKASI MAGANG ===
-    public function verifikasi()
+    // === MAHASISWA MAGANG ===
+    public function daftarMahasiswaMagang()
+    {
+        $applications = InternshipApplication::with(['user', 'company', 'supervisor'])
+            ->whereIn('status', ['approved_admin', 'approved'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        $dosens = User::where('role', 'dosen')->get();
+
+        return Inertia::render('Admin/MahasiswaMagang', [
+            'applications' => $applications,
+            'dosens' => $dosens,
+        ]);
+    }
+
+    public function assignDosen(Request $request, InternshipApplication $application)
+    {
+        $request->validate(['dosen_id' => 'required|exists:users,id']);
+        
+        $application->update([
+            'supervisor_id' => $request->dosen_id,
+            'status' => 'approved'
+        ]);
+
+        Notification::send($application->user_id, 'pembimbing_assigned', [
+            'message' => "Admin telah menetapkan dosen pembimbing untuk Anda.",
+        ]);
+        
+        Notification::send($request->dosen_id, 'mahasiswa_assigned', [
+            'message' => "Anda telah ditugaskan sebagai pembimbing untuk mahasiswa {$application->user->name}.",
+        ]);
+
+        return back()->with('success', 'Dosen pembimbing berhasil ditetapkan.');
+    }
+
+    // === SURAT PENGANTAR ===
+    public function suratPengantar()
     {
         $applications = InternshipApplication::with(['user', 'company'])
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'processing'])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('Admin/Verifikasi', [
+        return Inertia::render('Admin/SuratPengantar', [
             'applications' => $applications,
         ]);
     }
-
-    public function approveApplication(InternshipApplication $application)
+    
+    public function prosesSurat(InternshipApplication $application)
     {
-        $application->update(['status' => 'approved_admin']);
-
-        // Notify Kops
-        $kopsList = User::where('role', 'kops')->where('status', 'approved')->get();
-        foreach ($kopsList as $kops) {
-            Notification::send($kops->id, 'verifikasi_magang', [
-                'message' => "Pengajuan magang mahasiswa '{$application->user->name}' telah disetujui Admin dan menunggu verifikasi Anda.",
-                'application_id' => $application->id,
-            ]);
-        }
-
-        Notification::send($application->user_id, 'status_magang', [
-            'message' => "Pengajuan magang Anda telah disetujui oleh Admin. Menunggu verifikasi Koordinator.",
+        $application->update(['status' => 'processing']);
+        return back()->with('success', 'Status pengajuan diubah menjadi Sedang Diproses.');
+    }
+    
+    public function terbitkanSurat(Request $request, InternshipApplication $application)
+    {
+        $request->validate([
+            'letter_file' => 'required|file|max:5120|mimes:pdf,jpg,jpeg,png',
         ]);
 
-        return back()->with('success', 'Pengajuan magang diterima dan diteruskan ke Koordinator.');
-    }
-
-    public function rejectApplication(Request $request, InternshipApplication $application)
-    {
-        $request->validate(['rejection_reason' => 'required|string']);
+        $path = $request->file('letter_file')->store('surat-pengantar', 'public');
 
         $application->update([
-            'status' => 'rejected',
-            'rejection_reason' => $request->rejection_reason,
+            'status' => 'approved_admin',
+            'letter_file' => $path,
         ]);
-
-        Notification::send($application->user_id, 'status_magang', [
-            'message' => "Pengajuan magang Anda ditolak. Alasan: {$request->rejection_reason}",
+        
+        Notification::send($application->user_id, 'surat_pengantar_terbit', [
+            'message' => "Surat pengantar magang Anda telah diterbitkan oleh Admin. Silakan unduh di dashboard.",
         ]);
-
-        return back()->with('success', 'Pengajuan magang ditolak.');
+        
+        return back()->with('success', 'Surat pengantar berhasil diterbitkan dan status disetujui.');
     }
 }

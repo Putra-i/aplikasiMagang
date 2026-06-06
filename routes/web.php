@@ -50,30 +50,25 @@ Route::middleware('auth')->group(function () {
         Route::post('/pengguna', [AdminController::class, 'tambahUser'])->name('pengguna.store');
         Route::patch('/pengguna/{user}/approve', [AdminController::class, 'approveUser'])->name('pengguna.approve');
         Route::patch('/pengguna/{user}/reject', [AdminController::class, 'rejectUser'])->name('pengguna.reject');
+        
         Route::get('/perusahaan', [AdminController::class, 'perusahaan'])->name('perusahaan');
         Route::post('/perusahaan', [AdminController::class, 'tambahPerusahaan'])->name('perusahaan.store');
         Route::put('/perusahaan/{company}', [AdminController::class, 'updatePerusahaan'])->name('perusahaan.update');
         Route::delete('/perusahaan/{company}', [AdminController::class, 'deletePerusahaan'])->name('perusahaan.destroy');
-        Route::get('/verifikasi', [AdminController::class, 'verifikasi'])->name('verifikasi');
-        Route::patch('/verifikasi/{application}/approve', [AdminController::class, 'approveApplication'])->name('verifikasi.approve');
-        Route::patch('/verifikasi/{application}/reject', [AdminController::class, 'rejectApplication'])->name('verifikasi.reject');
-    });
-
-    // Kops routes
-    Route::middleware('role:kops')->prefix('kops')->name('kops.')->group(function () {
-        Route::get('/dashboard', [KopsController::class, 'dashboard'])->name('dashboard');
-        Route::get('/mahasiswa', [KopsController::class, 'daftarMahasiswa'])->name('mahasiswa');
-        Route::get('/dosen', [KopsController::class, 'daftarDosen'])->name('dosen');
-        Route::get('/verifikasi', [KopsController::class, 'verifikasi'])->name('verifikasi');
-        Route::patch('/verifikasi/{application}/approve', [KopsController::class, 'approveApplication'])->name('verifikasi.approve');
-        Route::patch('/verifikasi/{application}/reject', [KopsController::class, 'rejectApplication'])->name('verifikasi.reject');
+        
+        Route::get('/mahasiswa-magang', [AdminController::class, 'daftarMahasiswaMagang'])->name('mahasiswa_magang');
+        Route::patch('/mahasiswa-magang/{application}/assign-dosen', [AdminController::class, 'assignDosen'])->name('mahasiswa_magang.assign');
+        
+        Route::get('/surat-pengantar', [AdminController::class, 'suratPengantar'])->name('surat_pengantar');
+        Route::patch('/surat-pengantar/{application}/proses', [AdminController::class, 'prosesSurat'])->name('surat_pengantar.proses');
+        Route::post('/surat-pengantar/{application}/terbitkan', [AdminController::class, 'terbitkanSurat'])->name('surat_pengantar.terbitkan');
     });
 
     // Dosen Pembimbing routes
     Route::middleware('role:dosen')->prefix('dosen')->name('dosen.')->group(function () {
         Route::get('/dashboard', [DosenController::class, 'dashboard'])->name('dashboard');
-        Route::get('/mahasiswa', [DosenController::class, 'daftarMahasiswa'])->name('mahasiswa');
-        Route::get('/mahasiswa/{user}/laporan', [DosenController::class, 'showMahasiswaLaporan'])->name('mahasiswa.laporan');
+        Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
+        Route::get('/laporan/{user}', [DosenController::class, 'showMahasiswaLaporan'])->name('laporan.detail');
         Route::patch('/laporan/{report}/approve', [DosenController::class, 'approveReport'])->name('laporan.approve');
         Route::patch('/laporan/{report}/revise', [DosenController::class, 'reviseReport'])->name('laporan.revise');
     });

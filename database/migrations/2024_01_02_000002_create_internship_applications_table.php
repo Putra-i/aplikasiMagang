@@ -16,8 +16,8 @@ return new class extends Migration
             $table->text('custom_company_address')->nullable();
             $table->date('period_start');
             $table->date('period_end');
-            $table->string('acceptance_letter')->nullable();
-            $table->enum('status', ['pending', 'approved_admin', 'approved_kops', 'rejected'])->default('pending');
+            $table->string('letter_file')->nullable();
+            $table->enum('status', ['pending', 'processing', 'approved_admin', 'approved', 'rejected'])->default('pending');
             $table->text('rejection_reason')->nullable();
             $table->foreignId('supervisor_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();

@@ -18,12 +18,7 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if ($request->user()->role === 'mahasiswa' && $request->user()->status !== 'approved') {
-            auth()->logout();
-            return redirect()->route('login')->withErrors([
-                'email' => 'Akun Anda belum disetujui oleh Admin.',
-            ]);
-        }
+
 
         return $next($request);
     }

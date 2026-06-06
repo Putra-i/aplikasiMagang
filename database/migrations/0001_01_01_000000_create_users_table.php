@@ -11,29 +11,17 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('id_pengguna', 8, 0)->unique(); // NIM for Mahasiswa, NIDN for Dosen, NIP for Admin
-            $table->enum('role', ['mahasiswa', 'admin', 'kops', 'dosen'])->default('mahasiswa');
-            $table->enum('jurusan', [
-                'Teknik Informatika dan Komputer',
-                'Teknik Elektro',
-                'Administrasi Niaga'
-            ])->nullable();
-            $table->enum('prodi', [
-                'D4 Teknik Multimedia dan Jaringan',
-                'D4 Teknik Komputer dan Jaringan',
-                'D4 Teknik Listrik',
-                'D4 Teknologi Rekayasa Sistem Elektronika',
-                'D3 Administrasi Bisnis',
-                'D4 Manajemen Bisnis Jasa Pariwisata'
-            ])->nullable();
+            $table->string('id_pengguna', 25)->unique(); // NIM for Mahasiswa, NIDN for Dosen, NIP for Admin
+            $table->enum('role', ['mahasiswa', 'admin', 'dosen'])->default('mahasiswa');
+            $table->string('jurusan')->default('Teknik Informatika dan Komputer');
+            $table->string('prodi')->default('D4 Teknik Multimedia dan Jaringan');
             $table->string('password');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->decimal('id_pengguna', 8, 0)->primary();
+            $table->string('id_pengguna', 25)->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

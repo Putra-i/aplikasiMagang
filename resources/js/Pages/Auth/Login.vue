@@ -7,11 +7,25 @@
         </div>
         <div class="glass-card p-8 w-full max-w-md relative animate-fade-in-up">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl gradient-animate flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <div class="flex items-center justify-center gap-3 mb-3">
+                    <div class="w-12 h-14 flex items-center justify-center">
+                        <img src="/PNUP.png" alt="Logo PNUP" class="max-w-full max-h-full object-contain">
+                    </div>
+                    
+                    <div class="w-12 h-14 flex items-center justify-center">
+                        <img src="/TMJ.png" alt="Logo TMJ" class="max-w-full max-h-full object-contain">
+                    </div>
                 </div>
-                <h1 class="text-2xl font-bold text-white">Anti Gravity</h1>
-                <p class="text-white/50 text-sm mt-1">Sistem Pendaftaran Magang</p>
+               <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Sistem Pendaftaran Magang</h1>
+
+                <div class="mt-0.3 text-center">
+                    <p class="text-[#2C5EAD] text-sm font-semibold tracking-wide">
+                        Teknik Multimedia dan Jaringan
+                    </p>
+                    <p class="text-slate-500 text-xs mt-0.5 font-medium">
+                        Politeknik Negeri Ujung Pandang
+                    </p>
+                </div>
             </div>
 
             <div v-if="$page.props.flash?.success" class="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm">{{ $page.props.flash.success }}</div>
@@ -19,13 +33,13 @@
             <form @submit.prevent="submit">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-white/70 mb-1.5">ID Pengguna (8 Digit Angka)</label>
-                        <input v-model="form.id_pengguna" type="tel" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" class="input-field" placeholder="Contoh: 47334001" required />
+                        <label class="block text-sm font-medium text-white/70 mb-1.5">NIP / NIM</label>
+                        <input v-model="form.id_pengguna" type="text" class="input-field" required />
                         <p v-if="form.errors.id_pengguna" class="text-red-400 text-xs mt-1">{{ form.errors.id_pengguna }}</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-white/70 mb-1.5">Password</label>
-                        <input v-model="form.password" type="password" class="input-field" placeholder="••••••••" required />
+                        <input v-model="form.password" type="password" class="input-field"/>
                     </div>
                     <div class="flex items-center justify-between">
                         <label class="flex items-center gap-2 cursor-pointer">

@@ -2,12 +2,12 @@
     <Head :title="'Laporan - '+student.name" />
     <AppLayout :title="'Laporan: '+student.name" :menu-items="menuItems">
         <div class="max-w-3xl mx-auto space-y-6 animate-fade-in-up">
-            <a :href="route('dosen.mahasiswa')" @click.prevent="$inertia.visit(route('dosen.mahasiswa'))" class="text-primary-400 text-sm inline-block">← Kembali</a>
+            <a :href="route('dosen.laporan')" @click.prevent="$inertia.visit(route('dosen.laporan'))" class="text-primary-400 text-sm inline-block">← Kembali</a>
             <div class="glass-card p-5 flex items-center gap-4">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl font-bold">{{ student.name.charAt(0) }}</div>
                 <div>
                     <h3 class="font-semibold text-white text-lg">{{ student.name }}</h3>
-                    <p class="text-sm text-white/50">{{ student.email }} · {{ student.jurusan }} · {{ student.prodi }}</p>
+                    <p class="text-sm text-white/50">{{ student.id_pengguna }} · {{ student.jurusan }} · {{ student.prodi }}</p>
                     <p v-if="application" class="text-xs text-white/30 mt-1">Magang di: {{ application.company?.name || application.custom_company_name }}</p>
                 </div>
             </div>
@@ -25,9 +25,9 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <span :class="['badge',r.status==='approved'?'badge-approved':r.status==='revision'?'badge-pending':'badge-info']">{{ statusLabel(r.status) }}</span>
-                            <a :href="'/storage/'+r.file_path" target="_blank" class="btn-ghost !py-1 !px-3 text-xs">Lihat</a>
-                            <button v-if="r.status!=='approved'" @click="$inertia.patch(route('dosen.laporan.approve',r.id))" class="btn-accent !py-1 !px-3 text-xs">ACC</button>
-                            <button v-if="r.status!=='approved'" @click="reviseTarget=r" class="btn-ghost !py-1 !px-3 text-xs border-yellow-500/30 text-yellow-400">Revisi</button>
+                            <a :href="'/storage/'+r.file_path" target="_blank" class="btn-ghost btn-sm">Lihat</a>
+                            <button v-if="r.status!=='approved'" @click="$inertia.patch(route('dosen.laporan.approve',r.id))" class="btn-primary btn-sm">ACC</button>
+                            <button v-if="r.status!=='approved'" @click="reviseTarget=r" class="btn-ghost btn-sm border-yellow-500/30 text-yellow-600">Revisi</button>
                         </div>
                     </div>
                     <p v-if="r.revision_notes" class="text-xs text-yellow-300/70 mt-2 ml-13">Catatan: {{ r.revision_notes }}</p>
@@ -55,6 +55,6 @@ const doRevise=()=>{router.patch(route('dosen.laporan.revise',reviseTarget.value
 const statusLabel=s=>({uploaded:'Terkirim',reviewed:'Direview',approved:'Disetujui',revision:'Perlu Revisi'}[s]||s);
 const menuItems = [
     {label:'Dashboard',routeName:'dosen.dashboard',href:route('dosen.dashboard'),icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>'},
-    {label:'Mahasiswa Bimbingan',routeName:'dosen.mahasiswa',href:route('dosen.mahasiswa'),icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>'},
+    {label:'Laporan Magang',routeName:'dosen.laporan',href:route('dosen.laporan'),icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'},
 ];
 </script>

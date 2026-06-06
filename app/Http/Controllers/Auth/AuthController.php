@@ -18,7 +18,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'id_pengguna' => 'required|numeric|digits:8',
+            'id_pengguna' => 'required|string|min:8|max:25',
             'password' => 'required',
         ]);
 
@@ -26,13 +26,6 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-
-            if ($user->role === 'mahasiswa' && $user->status !== 'approved') {
-                Auth::logout();
-                return back()->withErrors([
-                    'id_pengguna' => 'Akun Anda belum disetujui oleh Admin.',
-                ]);
-            }
 
             return redirect()->intended(route("{$user->role}.dashboard"));
         }

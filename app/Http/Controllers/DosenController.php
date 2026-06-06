@@ -15,7 +15,7 @@ class DosenController extends Controller
     {
         $user = auth()->user();
         $studentCount = InternshipApplication::where('supervisor_id', $user->id)
-            ->where('status', 'approved_kops')
+            ->where('status', 'approved')
             ->count();
 
         return Inertia::render('Dosen/Dashboard', [
@@ -25,13 +25,13 @@ class DosenController extends Controller
         ]);
     }
 
-    public function daftarMahasiswa()
+    public function laporan()
     {
         $user = auth()->user();
 
         $applications = InternshipApplication::with(['user', 'company'])
             ->where('supervisor_id', $user->id)
-            ->where('status', 'approved_kops')
+            ->where('status', 'approved')
             ->get();
 
         return Inertia::render('Dosen/DaftarMahasiswa', [
@@ -48,11 +48,11 @@ class DosenController extends Controller
         $application = InternshipApplication::with('company')
             ->where('user_id', $user->id)
             ->where('supervisor_id', auth()->id())
-            ->where('status', 'approved_kops')
+            ->where('status', 'approved')
             ->first();
 
         return Inertia::render('Dosen/LaporanMahasiswa', [
-            'student' => $user->only(['id', 'name', 'email', 'nomor_induk', 'jurusan', 'prodi', 'foto']),
+            'student' => $user->only(['id', 'name', 'id_pengguna', 'jurusan', 'prodi']),
             'reports' => $reports,
             'application' => $application,
         ]);
@@ -86,4 +86,5 @@ class DosenController extends Controller
 
         return back()->with('success', 'Catatan revisi telah dikirim ke mahasiswa.');
     }
+
 }

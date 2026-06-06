@@ -12,60 +12,37 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // =============================================
-        // ADMIN (NIP: 8 digit angka)
+        // ADMIN (NIP: 18 digit)
         // =============================================
         User::create([
-            'name'        => 'Admin Anti Gravity',
-            'id_pengguna' => 10000001,
+            'name'        => 'Admin',
+            'id_pengguna' => '202606062026061001',
             'role'        => 'admin',
-            'password'    => Hash::make('10000001'),
-            'status'      => 'approved',
+            'password'    => Hash::make('202606062026061001'),
         ]);
 
         // =============================================
-        // KOORDINATOR / KOPS (NIP: 8 digit angka)
+        // DOSEN PEMBIMBING (NIDN/NIP)
         // =============================================
         User::create([
-            'name'        => 'Koordinator Prodi',
-            'id_pengguna' => 20000001,
-            'role'        => 'kops',
-            'password'    => Hash::make('20000001'),
-            'status'      => 'approved',
-        ]);
-
-        // =============================================
-        // DOSEN PEMBIMBING (NIDN: 8 digit angka)
-        // =============================================
-        User::create([
-            'name'        => 'Dr. Budi Santoso',
-            'id_pengguna' => 30000001,
-            'role'        => 'dosen',
-            'jurusan'     => 'Teknik Informatika dan Komputer',
-            'prodi'       => 'D4 Teknik Komputer dan Jaringan',
-            'password'    => Hash::make('30000001'),
-            'status'      => 'approved',
-        ]);
-
-        User::create([
-            'name'        => 'Prof. Siti Rahayu',
-            'id_pengguna' => 30000002,
+            'name'        => 'Pembimbing',
+            'id_pengguna' => '202606062026062001',
             'role'        => 'dosen',
             'jurusan'     => 'Teknik Informatika dan Komputer',
             'prodi'       => 'D4 Teknik Multimedia dan Jaringan',
-            'password'    => Hash::make('30000002'),
-            'status'      => 'approved',
+            'password'    => Hash::make('202606062026062001'),
         ]);
 
         // =============================================
-        // MAHASISWA (NIM: format 473340xx — 8 digit)
+        // MAHASISWA
         // =============================================
         $mahasiswaData = [
-            ['name' => 'Ahmad Fauzi',      'nim' => 47334001, 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Komputer dan Jaringan'],
-            ['name' => 'Dewi Anggraeni',   'nim' => 47334002, 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
-            ['name' => 'Rizky Pratama',    'nim' => 47334003, 'jurusan' => 'Teknik Elektro',                  'prodi' => 'D4 Teknik Listrik'],
-            ['name' => 'Nurul Hidayah',    'nim' => 47334004, 'jurusan' => 'Teknik Elektro',                  'prodi' => 'D4 Teknologi Rekayasa Sistem Elektronika'],
-            ['name' => 'Bagas Wicaksono',  'nim' => 47334005, 'jurusan' => 'Administrasi Niaga',              'prodi' => 'D3 Administrasi Bisnis'],
-            ['name' => 'Sari Indah Lestari','nim' => 47334006,'jurusan' => 'Administrasi Niaga',              'prodi' => 'D4 Manajemen Bisnis Jasa Pariwisata'],
+            ['name' => 'Nela Adelia Suci',      'nim' => '47224043', 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
+            ['name' => 'Muh. Baqir Hasis Dawi', 'nim' => '47224029', 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
+            ['name' => 'Putri Amelia',          'nim' => '47224045', 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
+            ['name' => 'Nirwana Binti Azhar',   'nim' => '47224042', 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
+            ['name' => 'Putra Ramadhani Makmur','nim' => '47224034', 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
+            ['name' => 'Salwa Dwi Ningsih',     'nim' => '47224033', 'jurusan' => 'Teknik Informatika dan Komputer', 'prodi' => 'D4 Teknik Multimedia dan Jaringan'],
         ];
 
         foreach ($mahasiswaData as $mhs) {
@@ -76,7 +53,6 @@ class DatabaseSeeder extends Seeder
                 'jurusan'     => $mhs['jurusan'],
                 'prodi'       => $mhs['prodi'],
                 'password'    => Hash::make((string) $mhs['nim']),
-                'status'      => 'approved',
             ]);
         }
 
